@@ -121,7 +121,7 @@ table.insert(res, redis.call("EXISTS", KEYS[11]))
 table.insert(res, "oldest_pending_since")
 if pendingTaskCount > 0 then
 	local id = redis.call("LRANGE", KEYS[1], -1, -1)[1]
-	table.insert(res, redis.call("HGET", ARGV[1] .. id, "pending_since"))
+	table.insert(res, redis.call("HMGET", ARGV[1] .. id, "pending_since"))
 else
 	table.insert(res, 0)
 end

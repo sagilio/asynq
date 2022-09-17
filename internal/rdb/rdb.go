@@ -97,7 +97,7 @@ var enqueueCmd = redis.NewScript(`
 if redis.call("EXISTS", KEYS[1]) == 1 then
 	return 0
 end
-redis.call("HSET", KEYS[1],
+redis.call("HMSET", KEYS[1],
            "msg", ARGV[1],
            "state", "pending",
            "pending_since", ARGV[3])
@@ -157,7 +157,7 @@ end
 if redis.call("EXISTS", KEYS[2]) == 1 then
   return 0
 end
-redis.call("HSET", KEYS[2],
+redis.call("HMSET", KEYS[2],
            "msg", ARGV[3],
            "state", "pending",
            "pending_since", ARGV[4],
@@ -381,7 +381,7 @@ end
 if redis.call("ZADD", KEYS[3], ARGV[3], ARGV[1]) ~= 1 then
   redis.redis.error_reply("INTERNAL")
 end
-redis.call("HSET", KEYS[4], "msg", ARGV[4], "state", "completed")
+redis.call("HMSET", KEYS[4], "msg", ARGV[4], "state", "completed")
 local n = redis.call("INCR", KEYS[5])
 if tonumber(n) == 1 then
 	redis.call("EXPIREAT", KEYS[5], ARGV[2])
@@ -418,7 +418,7 @@ end
 if redis.call("ZADD", KEYS[3], ARGV[3], ARGV[1]) ~= 1 then
   redis.redis.error_reply("INTERNAL")
 end
-redis.call("HSET", KEYS[4], "msg", ARGV[4], "state", "completed")
+redis.call("HMSET", KEYS[4], "msg", ARGV[4], "state", "completed")
 local n = redis.call("INCR", KEYS[5])
 if tonumber(n) == 1 then
 	redis.call("EXPIREAT", KEYS[5], ARGV[2])
@@ -514,7 +514,7 @@ var addToGroupCmd = redis.NewScript(`
 if redis.call("EXISTS", KEYS[1]) == 1 then
 	return 0
 end
-redis.call("HSET", KEYS[1],
+redis.call("HMSET", KEYS[1],
            "msg", ARGV[1],
            "state", "aggregating",
 	       "group", ARGV[4])
@@ -576,7 +576,7 @@ end
 if redis.call("EXISTS", KEYS[1]) == 1 then
 	return 0
 end
-redis.call("HSET", KEYS[1],
+redis.call("HMSET", KEYS[1],
            "msg", ARGV[1],
            "state", "aggregating",
 	       "group", ARGV[4])
@@ -634,7 +634,7 @@ var scheduleCmd = redis.NewScript(`
 if redis.call("EXISTS", KEYS[1]) == 1 then
 	return 0
 end
-redis.call("HSET", KEYS[1],
+redis.call("HMSET", KEYS[1],
            "msg", ARGV[1],
            "state", "scheduled")
 redis.call("ZADD", KEYS[2], ARGV[2], ARGV[3])
@@ -691,7 +691,7 @@ end
 if redis.call("EXISTS", KEYS[2]) == 1 then
   return 0
 end
-redis.call("HSET", KEYS[2],
+redis.call("HMSET", KEYS[2],
            "msg", ARGV[4],
            "state", "scheduled",
            "unique_key", KEYS[1])
@@ -757,7 +757,7 @@ if redis.call("ZREM", KEYS[3], ARGV[1]) == 0 then
   return redis.error_reply("NOT FOUND")
 end
 redis.call("ZADD", KEYS[4], ARGV[3], ARGV[1])
-redis.call("HSET", KEYS[1], "msg", ARGV[2], "state", "retry")
+redis.call("HMSET", KEYS[1], "msg", ARGV[2], "state", "retry")
 if tonumber(ARGV[5]) == 1 then
 	local n = redis.call("INCR", KEYS[5])
 	if tonumber(n) == 1 then
@@ -847,7 +847,7 @@ end
 redis.call("ZADD", KEYS[4], ARGV[3], ARGV[1])
 redis.call("ZREMRANGEBYSCORE", KEYS[4], "-inf", ARGV[4])
 redis.call("ZREMRANGEBYRANK", KEYS[4], 0, -ARGV[5])
-redis.call("HSET", KEYS[1], "msg", ARGV[2], "state", "archived")
+redis.call("HMSET", KEYS[1], "msg", ARGV[2], "state", "archived")
 local n = redis.call("INCR", KEYS[5])
 if tonumber(n) == 1 then
 	redis.call("EXPIREAT", KEYS[5], ARGV[6])
@@ -934,7 +934,7 @@ for _, id in ipairs(ids) do
 	else
 		redis.call("LPUSH", KEYS[2], id)
 		redis.call("ZREM", KEYS[1], id)
-		redis.call("HSET", taskKey,
+		redis.call("HMSET", taskKey,
 				   "state", "pending",
 				   "pending_since", ARGV[3])
 	end
@@ -1515,7 +1515,7 @@ func (r *RDB) WriteResult(qname, taskID string, data []byte) (int, error) {
 	ctx := context.Background()
 	taskKey := base.TaskKey(qname, taskID)
 	if err := r.client.HSet(ctx, taskKey, "result", data).Err(); err != nil {
-		return 0, errors.E(op, errors.Unknown, &errors.RedisCommandError{Command: "hset", Err: err})
+		return 0, errors.E(op, errors.Unknown, &errors.RedisCommandError{Command: "HSET", Err: err})
 	}
 	return len(data), nil
 }
