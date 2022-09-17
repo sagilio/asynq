@@ -228,10 +228,7 @@ func (r *RDB) CurrentStats(qname string) (*Stats, error) {
 		}
 	}
 	stats.Size = size
-	memusg, err := r.memoryUsage(qname)
-	if err != nil {
-		return nil, errors.E(op, errors.CanonicalCode(err), err)
-	}
+	memusg, _ := r.memoryUsage(qname)
 	stats.MemoryUsage = memusg
 	return stats, nil
 }
