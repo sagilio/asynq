@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/hibiken/asynq/internal/base"
-	"github.com/hibiken/asynq/internal/errors"
+	"github.com/sagilio/asynq/internal/base"
+	"github.com/sagilio/asynq/internal/errors"
 	"github.com/spf13/cast"
 )
 

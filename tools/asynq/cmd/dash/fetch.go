@@ -8,7 +8,7 @@ import (
 	"sort"
 
 	"github.com/gdamore/tcell/v2"
-	"github.com/hibiken/asynq"
+	"github.com/sagilio/asynq"
 )
 
 type fetcher interface {

@@ -16,10 +16,10 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/google/uuid"
-	"github.com/hibiken/asynq/internal/base"
-	"github.com/hibiken/asynq/internal/rdb"
-	h "github.com/hibiken/asynq/internal/testutil"
-	"github.com/hibiken/asynq/internal/timeutil"
+	"github.com/sagilio/asynq/internal/base"
+	"github.com/sagilio/asynq/internal/rdb"
+	h "github.com/sagilio/asynq/internal/testutil"
+	"github.com/sagilio/asynq/internal/timeutil"
 )
 
 func TestInspectorQueues(t *testing.T) {

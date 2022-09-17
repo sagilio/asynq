@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/hibiken/asynq/internal/base"
+	"github.com/sagilio/asynq/internal/base"
 )
 
 var errRedisDown = errors.New("testutil: redis is down")

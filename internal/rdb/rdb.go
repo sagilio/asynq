@@ -13,9 +13,9 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	"github.com/google/uuid"
-	"github.com/hibiken/asynq/internal/base"
-	"github.com/hibiken/asynq/internal/errors"
-	"github.com/hibiken/asynq/internal/timeutil"
+	"github.com/sagilio/asynq/internal/base"
+	"github.com/sagilio/asynq/internal/errors"
+	"github.com/sagilio/asynq/internal/timeutil"
 	"github.com/spf13/cast"
 )
 
