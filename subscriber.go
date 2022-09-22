@@ -76,6 +76,10 @@ func (s *subscriber) start(wg *sync.WaitGroup) {
 			}
 			break
 		}
+		if pubsub == nil {
+			s.logger.Error("Subscriber failed to connect to Redis")
+			return
+		}
 		cancelCh := pubsub.Channel()
 		for {
 			select {
