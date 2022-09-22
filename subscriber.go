@@ -25,12 +25,15 @@ type subscriber struct {
 
 	// time to wait before retrying to connect to redis.
 	retryTimeout time.Duration
+
+	retryFunc func(error) bool
 }
 
 type subscriberParams struct {
 	logger       *log.Logger
 	broker       base.Broker
 	cancelations *base.Cancelations
+	retryFunc    func(error) bool
 }
 
 func newSubscriber(params subscriberParams) *subscriber {
@@ -40,6 +43,7 @@ func newSubscriber(params subscriberParams) *subscriber {
 		done:         make(chan struct{}),
 		cancelations: params.cancelations,
 		retryTimeout: 5 * time.Second,
+		retryFunc:    params.retryFunc,
 	}
 }
 
@@ -58,10 +62,10 @@ func (s *subscriber) start(wg *sync.WaitGroup) {
 			err    error
 		)
 		// Try until successfully connect to Redis.
-		for {
+		for s.retryFunc(err) {
 			pubsub, err = s.broker.CancelationPubSub()
 			if err != nil {
-				s.logger.Errorf("cannot subscribe to cancelation channel: %v", err)
+				s.logger.Errorf("cannot subscribe to cancellation channel: %v", err)
 				select {
 				case <-time.After(s.retryTimeout):
 					continue

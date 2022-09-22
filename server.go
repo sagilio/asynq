@@ -220,6 +220,9 @@ type Config struct {
 	//
 	// If unset or nil, the group aggregation feature will be disabled on the server.
 	GroupAggregator GroupAggregator
+
+	// SubscribeRetryFunc
+	SubscribeRetryFunc func(error) bool
 }
 
 // GroupAggregator aggregates a group of tasks into one before the tasks are passed to the Handler.
@@ -441,6 +444,11 @@ func NewServer(r RedisConnOpt, cfg Config) *Server {
 	if groupGracePeriod == 0 {
 		groupGracePeriod = defaultGroupGracePeriod
 	}
+
+	subscribeRetryFunc := cfg.SubscribeRetryFunc
+	if subscribeRetryFunc == nil {
+		subscribeRetryFunc = func(err error) bool { return true }
+	}
 	if groupGracePeriod < time.Second {
 		panic("GroupGracePeriod cannot be less than a second")
 	}
@@ -488,6 +496,7 @@ func NewServer(r RedisConnOpt, cfg Config) *Server {
 		logger:       logger,
 		broker:       rdb,
 		cancelations: cancels,
+		retryFunc:    subscribeRetryFunc,
 	})
 	processor := newProcessor(processorParams{
 		logger:          logger,
